@@ -1,3 +1,8 @@
+networks:
+  nas_default:
+    external: true
+    name: "nas_default"
+    
 services:
   alist:
     container_name: "alist"
