@@ -1,0 +1,171 @@
+networks:
+  nas_default:
+    external: true
+    name: "nas_default"
+
+services:
+
+  alist:
+    container_name: "alist"
+    environment:
+      - "UMASK=022"
+      - "TZ=Asia/Shanghai"
+      - "PUID=0"
+      - "PGID=0"
+    hostname: "alist"
+    image: "xhofe/alist:latest"
+    networks:
+      - "nas_default"
+    ports:
+      - "5244:5244"
+      - "5245:5245"
+    restart: "always"
+    volumes:
+      - "/share/Container/alist:/opt/alist/data"
+      
+  chinesesubfinder:
+    container_name: "chinesesubfinder"
+    environment:
+      - "PUID=1000"
+      - "PGID=100"
+      - "TZ=Asia/Shanghai"
+    hostname: "chinesesubfinder"
+    image: "allanpk716/chinesesubfinder:latest"
+    networks:
+      - "nas_default"
+    ports:
+      - "19035:19035"
+      - "19037:19037"
+    restart: "always"
+    volumes:
+      - "/share/Container/chinesesubfinder/config:/config"
+      - "/share/qdownload/alist:/media"
+
+  flaresolverr:
+    container_name: "flaresolverr"
+
+    environment:
+      - "PUID=1000"
+      - "PGID=100"
+      - "TZ=Asia/Shanghai"
+    hostname: "flaresolverr"
+    image: "flaresolverr/flaresolverr:latest"
+    networks:
+      - "nas_default"
+    ports:
+      - "8191:8191"
+
+  jackett:
+    container_name: "jackett"
+
+    environment:
+      - "PUID=1000"
+      - "PGID=100"
+      - "TZ=Asia/Shanghai"
+    hostname: "jackett"
+    image: "linuxserver/jackett:latest"
+    networks:
+      - "nas_default"
+    ports:
+      - "9117:9117"
+    restart: "always"
+    volumes:
+      - "/share/Container/jackett/config:/config"
+
+  jellyfin:
+    container_name: "jellyfin"
+    devices:
+      - "/dev/dri:/dev/dri"
+    environment:
+      - "PUID=501"
+      - "PGID=80"
+      - "TZ=Asia/Shanghai"
+    extra_hosts:
+      - "www.themoviedb.org:13.225.103.79"
+      - "api.themoviedb.org:13.35.24.52"
+      - "image.tmdb.org:143.244.50.212"
+    hostname: "jellyfin"
+    image: "nyanmisaka/jellyfin:latest"
+    networks:
+      - "nas_default"
+    ports:
+      - "8096:8096"
+      - "8920:8920"
+    restart: "always"
+    volumes:
+      - "/share/Container/jellyfin:/config"
+      - "/share/qdownload:/media"
+  nastools:
+    container_name: "nastools"
+    environment:
+      - "PUID=1000"
+      - "PGID=100"
+      - "TZ=Asia/Shanghai"
+      - "UMASK=022"
+    hostname: "nastools"
+    image: "anypush/nas-tools:latest"
+    networks:
+      - "nas_default"
+    ports:
+      - "3000:3000"
+    restart: "always"
+    volumes:
+      - "/share/Container/nas-tools/config:/config"
+      - "/share/Container/rclone:/root/.config/rclone"
+      - "/share/pdownload:/pdownload"
+      - "/share/qdownload:/video"
+
+  prowlarr:
+    container_name: "prowlarr"
+    environment:
+      - "PUID=1000"
+      - "PGID=100"
+      - "TZ=Asia/Shanghai"
+    hostname: "prowlarr"
+    image: "linuxserver/prowlarr:latest"
+    networks:
+      - "nas_default"
+    ports:
+      - "9696:9696"
+    restart: "always"
+    volumes:
+      - "/share/Container/prowlarr/config:/config"
+
+  qbittorrent:
+    container_name: "qbittorrent"
+    environment:
+      - "PGID=100"
+      - "TZ=Asia/Shanghai"
+      - "WEBUI_PORT=8189"
+      - "PUID=1000"
+    hostname: "qbittorrent"
+    image: "linuxserver/qbittorrent:latest"
+    networks:
+      - "nas_default"
+    ports:
+      - "50413:50413/tcp"
+      - "50413:50413/udp"
+      - "8189:8189/tcp"
+    restart: "always"
+    volumes:
+      - "/share/Container/qbittorrent/config:/config"
+      - "/share/pdownload:/pdownload"
+      - "/share/qdownload:/downloads"
+
+  rclone:
+    container_name: "rclone"
+    devices:
+      - "/dev/fuse:/dev/fuse"
+
+    environment:
+      - "RemotePath=NASTOOL:"
+      - "MountCommands=--allow-other --allow-non-empty --buffer-size 32M --vfs-read-chunk-size=32M --vfs-read-chunk-size-limit\
+        \ 2048M --vfs-cache-mode writes --dir-cache-time 1h"
+    hostname: "rclone"
+    image: "gqbre/docker-rclone-proxy"
+    networks:
+      - "nas_default"
+    restart: "always"
+    volumes:
+      - "/share/Container/rclone:/config"
+      - "/share/qdownload/alist:/mnt/mediaefs"
