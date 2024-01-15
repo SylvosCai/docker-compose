@@ -153,11 +153,11 @@ services:
   rclone:
     container_name: "rclone"
     security_opt:
-      - apparmor:unconfined    
+      - "apparmor:unconfined"
     devices:
       - "/dev/fuse:/dev/fuse"
     environment:
-      - "RemotePath=mediaefs:"
+      - "RemotePath=NASTOOL:"
       - "MountCommands=--allow-other --allow-non-empty --buffer-size 32M --vfs-read-chunk-size=32M --vfs-read-chunk-size-limit 2048M --vfs-cache-mode writes --dir-cache-time 1h"
     hostname: "rclone"
     image: "gqbre/docker-rclone-proxy"
