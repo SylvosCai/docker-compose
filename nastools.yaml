@@ -1,14 +1,7 @@
-networks:
-  nas_default:
-    external: true
-    name: "nas_default"
-
 services:
-
   alist:
     container_name: "alist"
     environment:
-      - "UMASK=022"
       - "TZ=Asia/Shanghai"
       - "PUID=0"
       - "PGID=0"
@@ -22,12 +15,12 @@ services:
     restart: "always"
     volumes:
       - "/share/Container/alist:/opt/alist/data"
-      
+
   chinesesubfinder:
     container_name: "chinesesubfinder"
     environment:
-      - "PUID=1000"
-      - "PGID=100"
+      - "PUID=0"
+      - "PGID=0"
       - "TZ=Asia/Shanghai"
     hostname: "chinesesubfinder"
     image: "allanpk716/chinesesubfinder:latest"
@@ -43,10 +36,9 @@ services:
 
   flaresolverr:
     container_name: "flaresolverr"
-
     environment:
-      - "PUID=1000"
-      - "PGID=100"
+      - "PUID=0"
+      - "PGID=0"
       - "TZ=Asia/Shanghai"
     hostname: "flaresolverr"
     image: "flaresolverr/flaresolverr:latest"
@@ -57,10 +49,9 @@ services:
 
   jackett:
     container_name: "jackett"
-
     environment:
-      - "PUID=1000"
-      - "PGID=100"
+      - "PUID=0"
+      - "PGID=0"
       - "TZ=Asia/Shanghai"
     hostname: "jackett"
     image: "linuxserver/jackett:latest"
@@ -77,8 +68,8 @@ services:
     devices:
       - "/dev/dri:/dev/dri"
     environment:
-      - "PUID=501"
-      - "PGID=80"
+      - "PUID=0"
+      - "PGID=0"
       - "TZ=Asia/Shanghai"
     extra_hosts:
       - "www.themoviedb.org:13.225.103.79"
@@ -93,13 +84,15 @@ services:
       - "8920:8920"
     restart: "always"
     volumes:
+      - "/share/Container/jellyfin/cache:/cache"
       - "/share/Container/jellyfin:/config"
       - "/share/qdownload:/media"
+      - "/share/Container/xiaoya/media:/xiaoya"
   nastools:
     container_name: "nastools"
     environment:
-      - "PUID=1000"
-      - "PGID=100"
+      - "PUID=0"
+      - "PGID=0"
       - "TZ=Asia/Shanghai"
       - "UMASK=022"
     hostname: "nastools"
@@ -118,8 +111,8 @@ services:
   prowlarr:
     container_name: "prowlarr"
     environment:
-      - "PUID=1000"
-      - "PGID=100"
+      - "PUID=0"
+      - "PGID=0"
       - "TZ=Asia/Shanghai"
     hostname: "prowlarr"
     image: "linuxserver/prowlarr:latest"
@@ -154,13 +147,13 @@ services:
 
   rclone:
     container_name: "rclone"
+    security_opt:
+      - apparmor:unconfined    
     devices:
       - "/dev/fuse:/dev/fuse"
-
     environment:
-      - "RemotePath=NASTOOL:"
-      - "MountCommands=--allow-other --allow-non-empty --buffer-size 32M --vfs-read-chunk-size=32M --vfs-read-chunk-size-limit\
-        \ 2048M --vfs-cache-mode writes --dir-cache-time 1h"
+      - "RemotePath=mediaefs:"
+      - "MountCommands=--allow-other --allow-non-empty --buffer-size 32M --vfs-read-chunk-size=32M --vfs-read-chunk-size-limit 2048M --vfs-cache-mode writes --dir-cache-time 1h"
     hostname: "rclone"
     image: "gqbre/docker-rclone-proxy"
     networks:
